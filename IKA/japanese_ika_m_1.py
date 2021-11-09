@@ -16,11 +16,8 @@ class DammHalfRotor:
         self.offset = (self.offset + increment) % len(self.alphabet)
         
     def Decipher(self, element):
-        #print('self.offset=%d' % (self.offset)) #debug
         index1 = self.alphabet.index(element)
-        #print('index1=%d' % (index1)) #debug
         index2 = (index1 + self.offset) % len(self.alphabet)
-        #print('index2=%d' % (index2)) #debug
         return self.alphabet[index2]
         
     def Dump(self, desc, verbose):
@@ -128,37 +125,38 @@ class IkaMachine:
         self.half_rotor = DammHalfRotor(self.major_alphabet, self.starting_offset)
         self.mono_map = MonoalphabeticMapping(self.minor_alphabet)
         self.break_wheel = BreakWheel(self.num_of_pins, self.inactive_pin_list)
-        
-        if (self.trace):
-            self.TraceComponents('Initial setup state', verbose=True)
 
-    def TraceComponents(self, desc, **kwargs):
-        verbose = False
-        if 'verbose' in kwargs:
-            verbose = kwargs['verbose']
-        self.break_wheel.Dump(desc, verbose)
-        self.half_rotor.Dump(desc, verbose)
+        if self.trace:        
+            self.TraceComponents('Initial setup state')
+
+    def TraceComponents(self, desc):
+        self.break_wheel.Dump(desc, self.trace)
+        self.half_rotor.Dump(desc, self.trace)
         
     def decipher(self, ct):
         complete_pt = ''
         count = 0
         for e in ct:
-            print('-----------------------------------------')
+            if self.trace:
+                print('-----------------------------------------')
             sub = self.mono_map.ReturnSubstitution(e)
             if (sub == None):
                 # Not found in minor alphabet, decipher with major alphabet
                 pt = self.half_rotor.Decipher(e)
-                print('%d: %s -> %s' % (count, e, pt))  #debug
+                if self.trace:
+                    print('%d: %s -> %s' % (count, e, pt))  #debug
                 complete_pt = complete_pt + pt + ' '
             else:
                 # Found in minor alphabet
                 complete_pt = complete_pt + sub + ' '
-                print('%d: %s -> %s' % (count, e, sub))  #debug
+                if self.trace:
+                    print('%d: %s -> %s' % (count, e, sub))  #debug
 
             count = count + 1
             slide = self.break_wheel.ReturnSlide()
             self.half_rotor.IncrementOffset(slide);
-            print('slide=%d' % (slide)) #debug
+            if self.trace:
+                print('slide=%d' % (slide)) #debug
 
             if (self.trace):
                 self.TraceComponents('After deciphering')
