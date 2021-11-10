@@ -38,7 +38,7 @@ def main():
           'WA', 'YO', 'MA', 'HO', 'YA', 'YO', 'TU', 'NE', 'N']
     inactive_pin_list = [5, 8, 11, 17, 22, 25, 26, 29, 34, 37, 41, 44, 46]
     ika = japanese_ika_m_1.IkaMachine(major_alphabet, 10, minor_alphabet, 47, inactive_pin_list, trace=args.trace)
-    pt = ika.decipher(ct)
+    pt = ika.Decipher(ct)
     print("\npt = '%s'" % (pt))
 
 if __name__ == "__main__":
