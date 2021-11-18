@@ -1,3 +1,5 @@
+import unittest
+
 #--------------------------------------
 # Class Name: DammHalfRotor
 # Purpose: Simulate a Damm half rotor
@@ -83,7 +85,7 @@ class BreakWheel:
         self.total_num_pins = total_num_pins
         self.inactive_pins = inactive_pins
         self.pin_number = 1
-        
+
     #--------------------------------------
     # Function Name: SetPinNumber
     # Purpose: Set the value of <self.pin_number>
@@ -94,7 +96,7 @@ class BreakWheel:
         if n == 0:
             n = 1
         self.pin_number = n
-        
+
     #--------------------------------------
     # Function Name: ComputePinNumber
     # Purpose: Normalize a pin number, keeping the result 1-based and in
@@ -107,7 +109,7 @@ class BreakWheel:
         if normalized_pin_number == 0:
             normalized_pin_number = 1
         return normalized_pin_number
-        
+
     #--------------------------------------
     # Function Name: ReturnSlide
     # Purpose: Compute the next break wheel slide factor (i.e.,
@@ -288,103 +290,121 @@ class IkaMachine:
 
         return complete_pt
 
-#--------------------------------------
-# Name: unit_test_01
-# Purpose: Verify complete cycle of breakwheel slides
-#--------------------------------------
-def unit_test_01():
-    number_of_pins = 47
-    inactive_pin_list = [5, 8, 11, 17, 22, 25, 26, 29, 34, 37, 41, 44, 46]
-    break_wheel = BreakWheel(number_of_pins, inactive_pin_list)
-    expected_slides = [1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 3, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 2, 1]
+# --------------------------------------
+#   Unit tests
+# --------------------------------------
 
-    starting_pin = break_wheel.ReturnCurrentPin()
+class TestIka(unittest.TestCase):
 
-    expected_slide_offset = 0
-    while True:
-        current_pin = break_wheel.ReturnCurrentPin()
-        #print('(1) current_pin=%d' % (break_wheel.ReturnCurrentPin()))    #debug
+    # --------------------------------------
+    # Name: test_breakwheel_01
+    # Purpose: Verify complete cycle of breakwheel slides
+    # --------------------------------------
+    def test_breakwheel_01(self):
+        number_of_pins = 47
+        inactive_pin_list = [5, 8, 11, 17, 22, 25, 26, 29, 34, 37, 41, 44, 46]
+        break_wheel = BreakWheel(number_of_pins, inactive_pin_list)
+        expected_slides = [1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 3, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1,
+                           2, 2, 1]
+
+        starting_pin = break_wheel.ReturnCurrentPin()
+
+        expected_slide_offset = 0
+        while True:
+            current_pin = break_wheel.ReturnCurrentPin()
+            slide = break_wheel.ReturnSlide()
+            self.assertEqual(expected_slides[expected_slide_offset], slide)
+            if break_wheel.ReturnCurrentPin() == starting_pin:
+                break
+            expected_slide_offset = (expected_slide_offset + 1) % len(expected_slides)
+
+    # --------------------------------------
+    # Name: test_breakwheel_02
+    # Purpose: Verify break wheel slide computation wraps correctly at end of pin list
+    #          when the last pin is inactive.
+    # --------------------------------------
+    def test_breakwheel_02(self):
+        number_of_pins = 47
+        inactive_pin_list = [47]
+        break_wheel = BreakWheel(number_of_pins, inactive_pin_list)
+
+        break_wheel.SetPinNumber(46)
         slide = break_wheel.ReturnSlide()
-        #print('(2) current_pin=%d' % (break_wheel.ReturnCurrentPin()))    #debug
-        if expected_slides[expected_slide_offset] != slide:
-            # Error
-            print('unit_test_01: Failure: When sliding from pin %d, expected slide of %d, got %d' % (current_pin, expected_slides[expected_slide_offset], slide))
-            return
-        if break_wheel.ReturnCurrentPin() == starting_pin:
-            break
-        expected_slide_offset = (expected_slide_offset + 1) % len(expected_slides)
+        self.assertEqual(slide, 2)
 
-    print('unit_test_01: Success')
+    # --------------------------------------
+    # Name: test_breakwheel_03
+    # Purpose: Verify break wheel slide computation wraps correctly at end of pin list when the
+    #          last and first two pins are all inactive.
+    # --------------------------------------
+    def test_breakwheel_03(self):
+        number_of_pins = 47
+        inactive_pin_list = [1, 2, 47]
+        break_wheel = BreakWheel(number_of_pins, inactive_pin_list)
 
-#--------------------------------------
-# Name: unit_test_02
-# Purpose: Verify break wheel slide computation wraps correctly at end of pin list
-#          when the last pin is inactive.
-#--------------------------------------
-def unit_test_02():
-    number_of_pins = 47
-    inactive_pin_list = [47]
-    break_wheel = BreakWheel(number_of_pins, inactive_pin_list)
+        break_wheel.SetPinNumber(1)
+        slide = break_wheel.ReturnSlide()
+        self.assertEqual(slide, 2)
 
-    break_wheel.SetPinNumber(46)
-    slide = break_wheel.ReturnSlide()
-    if slide != 2:
-        print('unit_test_02: Failure: Expected slide of 2, received %d instead' % (slide))
-        return
+        break_wheel.SetPinNumber(46)
+        slide = break_wheel.ReturnSlide()
+        self.assertEqual(slide, 4)
 
-    print('unit_test_02: Success')
+    # --------------------------------------
+    # Name: test_breakwheel_04
+    # Purpose: Verify break wheel slide computation is correct for many consecutive inactive pins
+    # --------------------------------------
+    def test_breakwheel_04(self):
+        number_of_pins = 10
+        inactive_pin_list = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+        break_wheel = BreakWheel(number_of_pins, inactive_pin_list)
 
-#--------------------------------------
-# Name: unit_test_03
-# Purpose: Verify break wheel slide computation wraps correctly at end of pin list when the
-#          last and first two pins are all inactive.
-#--------------------------------------
-def unit_test_03():
-    number_of_pins = 47
-    inactive_pin_list = [1, 2, 47]
-    break_wheel = BreakWheel(number_of_pins, inactive_pin_list)
+        break_wheel.SetPinNumber(1)
+        slide = break_wheel.ReturnSlide()
+        self.assertEqual(slide, 10)
 
-    break_wheel.SetPinNumber(1)
-    slide = break_wheel.ReturnSlide()
-    if slide != 2:
-        print('unit_test_03: Failure: Expected slide of 2, received %d instead' % (slide))
-        return
+    def test_decipher_01(self):
+        major_alphabet = ['KI', 'HI', 'WO', 'MI', 'KE', 'TO', 'SA', 'KO', 'SE', 'HO',
+                          'MU', 'NO', 'YO', 'RU', 'KA', 'FU', 'RE', 'RA', 'YA', 'SI',
+                          'HA', 'TU', 'N', 'U', 'A', 'I', 'MA', 'TE', 'WA', 'MO',
+                          'ME', 'KU', 'E', 'NA', 'TA', 'NI', 'YU', 'TI', 'RI', 'NE',
+                          'HE', 'SU']
+        minor_alphabet = {'RO': 'parenthesis', 'WI': 'RO', 'SO': 'Nigori', 'NU': 'Hannigori',
+                          'O': 'SO', 'WE': 'NU', 'X': 'Stop'}
+        ct = ['SA', 'NO', 'TI', 'NO', 'SE', 'RE', 'KE', 'KI', 'WO', 'RU',
+              'NA', 'HE', 'RE', 'WA', 'E', 'TA', 'MA', 'TA', 'KU', 'SA',
+              'A', 'TE', 'KO', 'NE', 'SI', 'A', 'NI', 'FU', 'SU', 'A',
+              'MA', 'YU', 'YO', 'SE', 'KE', 'SE', 'SA', 'RA', 'TU', 'SI',
+              'HI', 'YA', 'MA', 'YO', 'FU', 'YA', 'YO', 'NA', 'HO', 'WA',
+              'MU', 'HO', 'MO', 'MU', 'KI', 'MU', 'WA', 'U', 'YA', 'TO',
+              'ME', 'TE', 'HE', 'NO', 'RU', 'SE', 'NE', 'MI', 'SO', 'SA',
+              'TA', 'I', 'KA', 'HI', 'NO', 'YU', 'ME', 'KU', 'RA', 'KE',
+              'WA', 'ME', 'ME', 'N', 'HI', 'X', 'KE', 'SI', 'X', 'TO',
+              'ME', 'NA', 'HO', 'YO', 'KO', 'SA', 'A', 'NU', 'KE', 'ME',
+              'TI', 'KU', 'ME', 'YU', 'NE', 'KI', 'TI', 'O', 'HA', 'NI',
+              'TE', 'MA', 'WA', 'MI', 'TI', 'KA', 'HA', 'RE', 'HI', 'MA',
+              'MO', 'TU', 'MO', 'SI', 'NO', 'SE', 'SU', 'KO', 'MU', 'TE',
+              'E', 'YU', 'HE', 'TA', 'KE', 'SA', 'SE', 'TA', 'NI', 'RA',
+              'A', 'SI', 'RA', 'SE', 'SA', 'MO', 'TA', 'KU', 'N', 'TO',
+              'HI', 'FU', 'KU', 'MU', 'YU', 'HO', 'YU', 'SA', 'MA', 'TE',
+              'TO', 'KA', 'RI', 'O', 'TE', 'YU', 'YA', 'YU', 'MA', 'ME',
+              'A', 'TI', 'KO', 'HO', 'SI', 'KA', 'YO', 'MU', 'SI', 'HA',
+              'WA', 'YO', 'MA', 'HO', 'YA', 'YO', 'TU', 'NE', 'N']
+        inactive_pin_list = [5, 8, 11, 17, 22, 25, 26, 29, 34, 37, 41, 44, 46]
+        ika = IkaMachine(major_alphabet, 10, minor_alphabet, 47, inactive_pin_list, trace=False)
+        pt_string = ika.Decipher(ct)
+        pt = pt_string.split()
+        self.assertEqual(len(pt), len(ct))
 
-    break_wheel.SetPinNumber(46)
-    slide = break_wheel.ReturnSlide()
-    if slide != 4:
-        print('unit_test_03: Failure: Expected slide of 4, received %d instead' % (slide))
-        return
+        expected_pt_start = ['RE', 'N', 'KO', 'A', 'U', 'E', 'N', 'SI']
+        expected_pt_end = ['A', 'TA', 'YO', 'RI']
 
-    print('unit_test_03: Success')
+        for i in range(len(expected_pt_start)):
+            self.assertEqual(pt[i], expected_pt_start[i])
 
-#--------------------------------------
-# Name: unit_test_04
-# Purpose: Verify break wheel slide computation is correct for many consecutive inactive pins
-#--------------------------------------
-def unit_test_04():
-    number_of_pins = 10
-    inactive_pin_list = [2, 3, 4, 5, 6, 7, 8, 9, 10]
-    break_wheel = BreakWheel(number_of_pins, inactive_pin_list)
+        for i in range(len(expected_pt_end)):
+            ind = len(pt) - len(expected_pt_end) + i
+            self.assertEqual(pt[ind], expected_pt_end[i])
 
-    break_wheel.SetPinNumber(1)
-    slide = break_wheel.ReturnSlide()
-    if slide != 10:
-        print('unit_test_04: Failure: Expected slide of 10, received %d instead' % (slide))
-        return
-
-    print('unit_test_04: Success')
-    
-#--------------------------------------
-# Name: main
-# Purpose: Perform unit tests
-#--------------------------------------
-def main():
-    unit_test_01()
-    unit_test_02()
-    unit_test_03()
-    unit_test_04()
-    
 if __name__ == "__main__":
-    main()
-    
+    unittest.main()
