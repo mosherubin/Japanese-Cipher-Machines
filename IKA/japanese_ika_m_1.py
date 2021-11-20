@@ -58,7 +58,7 @@ class DammHalfRotor:
     # Parameter: desc  A descriptive string printed in the trace dump
     #--------------------------------------
     def Dump(self, desc):
-        print('Dumping Damm half rotor: %s' % (desc))
+        print('\nDumping Damm half rotor: %s' % (desc))
         for a in self.alphabet:
             print(a.ljust(self.max_element_length) + ' ', end='')
         print()
@@ -161,7 +161,7 @@ class BreakWheel:
     # Parameter: desc  A descriptive string printed in the trace dump
     #--------------------------------------
     def Dump(self, desc, verbose):
-        print('Dumping break wheel: %s' % (desc))
+        print('\nDumping break wheel: %s' % (desc))
         if verbose:
             for i in range (1, self.total_num_pins+1):
                 if (i > 1):
@@ -177,10 +177,8 @@ class BreakWheel:
                 print(' ' + self.FormatBreakWheelPinNumber(i), end='')
                 if not i in self.inactive_pins:
                     break
+        print()
 
-        print()
-        print()
-        
 #--------------------------------------
 # Class Name: ManoalphabeticMapping
 # Purpose: Perform a monoalphabetic mapping of ciphertext strings to their plaintext phrases
@@ -212,6 +210,19 @@ class MonoalphabeticMapping:
         else:
             return None
 
+    # --------------------------------------
+    # Function Name: Dump
+    # Purpose: A debugging function for tracing the state of this class
+    # Parameter: desc  A descriptive string printed in the trace dump
+    # --------------------------------------
+    def Dump(self, desc):
+        print('\nDumping monoalphabet map: %s' % (desc))
+
+        for key, value in self.mono_map.items():
+            print("%s -> %s" % (key, value))
+        print()
+
+
 #--------------------------------------
 # Class Name: IkaMachine
 # Purpose: Perform the deciphering operation of a Japanese IKA cipher machine
@@ -222,38 +233,43 @@ class MonoalphabeticMapping:
 # Field: starting_offset  The initial offset of the Damm half rotor
 # Field: minor_alphabet  A dictionary of ciphertext elements and their
 #        plaintext counterparts
-# Field: num_of_pins  The total number of pins defined for the break wheel
+# Field: number_of_pins  The total number of pins defined for the break wheel
 # Field: inactive_pins  A list of integers denoting the inactive pins (the
 #        numbers are 1-based, not 0-based)
 # Field: half_rotor  Instatiated Damm half rotor object
 # Field: break_wheel  Instantiated break wheel object
 #--------------------------------------
 class IkaMachine:
-    def __init__(self, major_alphabet, starting_offset, minor_alphabet, num_of_pins, inactive_pin_list, **kwargs):
+    def __init__(self, major_alphabet, starting_offset, minor_alphabet, number_of_pins, inactive_pin_list, **kwargs):
         self.trace = kwargs['trace']
 
         self.major_alphabet = major_alphabet
         self.starting_offset = starting_offset
         self.minor_alphabet = minor_alphabet
-        self.num_of_pins = num_of_pins
+        self.number_of_pins = number_of_pins
         self.inactive_pin_list = inactive_pin_list
         
         self.half_rotor = DammHalfRotor(self.major_alphabet, self.starting_offset)
         self.mono_map = MonoalphabeticMapping(self.minor_alphabet)
-        self.break_wheel = BreakWheel(self.num_of_pins, self.inactive_pin_list)
+        self.break_wheel = BreakWheel(self.number_of_pins, self.inactive_pin_list)
 
-        if self.trace:        
-            self.TraceComponents('Initial setup state')
+        if self.trace:
+            desc = 'Initial setup state'
+            self.TraceComponents(desc)
+            self.mono_map.Dump(desc)
+            print("starting_offset = %d" % self.starting_offset)
+            print("number_of_pins = %d" % self.number_of_pins)
+            print("inactive_pin_list = %s" % (str(self.inactive_pin_list)))
 
     #--------------------------------------
     # Function Name: TraceComponents
     # Purpose: Output debugging traces of the break wheel and the half rotor
-    # Parameter: desc  A descriptive string printed in the trace dump
+    # Parameter: desc  A descriptive string printed in the dump
     #--------------------------------------
     def TraceComponents(self, desc):
         self.break_wheel.Dump(desc, self.trace)
         self.half_rotor.Dump(desc)
-        
+
     #--------------------------------------
     # Function Name: Decipher
     # Purpose: Decipher a list of ciphertext elements
