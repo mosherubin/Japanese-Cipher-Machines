@@ -1,6 +1,7 @@
 import japanese_ika_m_1
 import argparse
 import json
+import sys
 
 def main():
     parser = argparse.ArgumentParser()
@@ -21,13 +22,18 @@ def main():
     # a dictionary
     data = json.load(f)
 
-    ika = japanese_ika_m_1.IkaMachine(
-        data['major_alphabet'],
-        data['starting_offset'],
-        data['minor_alphabet'],
-        data['number_of_pins'],
-        data['inactive_pin_list'],
+    try:
+        ika = japanese_ika_m_1.IkaMachine(
+            data['major_alphabet'],
+            data['starting_offset'],
+            data['minor_alphabet'],
+            data['number_of_pins'],
+            data['inactive_pin_list'],
         trace=args.trace)
+    except:
+        print('Exception caught, exiting')
+        sys.exit(-1)
+
     pt = ika.Decipher(data['ct'])
     print("\npt = '%s'" % (pt))
 

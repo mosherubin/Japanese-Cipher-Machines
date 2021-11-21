@@ -17,12 +17,39 @@ class DammHalfRotor:
     def __init__(self, alphabet, offset=0):
         self.alphabet = alphabet
         self.offset = offset
-        
+
+        try:
+            self.Verify()
+        except:
+            raise Exception('MonoalphabeticMapping: verification failed')
+
         # Determine longest alphabet element
         self.max_element_length = 0
         for a in alphabet:
             if len(a) > self.max_element_length:
                 self.max_element_length = len(a)
+
+    # --------------------------------------
+    # Function Name: Verify
+    # Purpose: Validate the data definitions passed to the constructor
+    # --------------------------------------
+    def Verify(self):
+        if self.offset < 0:
+            print('Offset is < 0 for DammHalfRotor, throwing exception')
+            raise Exception('DammHalfRotor: Offset is < 0')
+
+        if self.offset >= len(self.alphabet):
+            print('Offset exceeds alphabet size for DammHalfRotor, throwing exception')
+            raise Exception('DammHalfRotor: Offset exceeds alphabet size')
+
+        # Make sure there are no duplicate elements in self.alphabet
+        element_set = set()
+        for e in self.alphabet:
+            if e in element_set:
+                print('DammHalfRotor: Duplicate element "%s" encountered' % (e))
+                raise Exception('DammHalfRotor: Duplicate element "%s" encountered' % (e))
+
+        return True
 
     #--------------------------------------
     # Function Name: SetAbsoluteOffset
@@ -85,6 +112,18 @@ class BreakWheel:
         self.total_num_pins = total_num_pins
         self.inactive_pins = inactive_pins
         self.pin_number = 1
+
+        try:
+            self.Verify()
+        except:
+            raise Exception('BreakWheel: verification failed')
+
+    #--------------------------------------
+    # Function Name: Verify
+    # Purpose: Validate the data definitions passed to the constructor
+    #--------------------------------------
+    def Verify(self):
+        return True
 
     #--------------------------------------
     # Function Name: SetPinNumber
@@ -187,7 +226,27 @@ class BreakWheel:
 class MonoalphabeticMapping:
     def __init__(self, mono_map):
         self.mono_map = mono_map
-        
+
+        try:
+            self.Verify()
+        except:
+            raise Exception('MonoalphabeticMapping: verification failed')
+
+    #--------------------------------------
+    # Function Name: Verify
+    # Purpose: Validate the data definitions passed to the constructor
+    #--------------------------------------
+    def Verify(self):
+        # Verify that no value is used multiple times
+        value_set = set()
+        for key, value in self.mono_map.items():
+            if value in value_set:
+                # Duplicate value
+                print('MonoalphabeticMapping: The value "%s" occurs twice' % (value))
+                raise Exception('MonoalphabeticMapping: Duplicate value encountered ("%s")' % (value))
+            value_set.add(value)
+        return True
+
     #--------------------------------------
     # Function Name: IsInMap
     # Purpose: Determine if a ciphertext element exists in the mapping
@@ -248,10 +307,13 @@ class IkaMachine:
         self.minor_alphabet = minor_alphabet
         self.number_of_pins = number_of_pins
         self.inactive_pin_list = inactive_pin_list
-        
-        self.half_rotor = DammHalfRotor(self.major_alphabet, self.starting_offset)
-        self.mono_map = MonoalphabeticMapping(self.minor_alphabet)
-        self.break_wheel = BreakWheel(self.number_of_pins, self.inactive_pin_list)
+
+        try:
+            self.half_rotor = DammHalfRotor(self.major_alphabet, self.starting_offset)
+            self.mono_map = MonoalphabeticMapping(self.minor_alphabet)
+            self.break_wheel = BreakWheel(self.number_of_pins, self.inactive_pin_list)
+        except:
+            raise Exception('IkaMachine: constructor failed')
 
         if self.trace:
             desc = 'Initial setup state'
@@ -407,7 +469,11 @@ class TestIka(unittest.TestCase):
               'A', 'TI', 'KO', 'HO', 'SI', 'KA', 'YO', 'MU', 'SI', 'HA',
               'WA', 'YO', 'MA', 'HO', 'YA', 'YO', 'TU', 'NE', 'N']
         inactive_pin_list = [5, 8, 11, 17, 22, 25, 26, 29, 34, 37, 41, 44, 46]
-        ika = IkaMachine(major_alphabet, 10, minor_alphabet, 47, inactive_pin_list, trace=False)
+        try:
+            ika = IkaMachine(major_alphabet, 10, minor_alphabet, 47, inactive_pin_list, trace=False)
+        except:
+            print('Exception caught, check output')
+            return
         pt_string = ika.Decipher(ct)
         pt = pt_string.split()
         self.assertEqual(len(pt), len(ct))
