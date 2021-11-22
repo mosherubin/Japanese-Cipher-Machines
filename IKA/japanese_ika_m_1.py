@@ -68,17 +68,29 @@ class DammHalfRotor:
         self.offset = (self.offset + increment) % len(self.alphabet)
         
     #--------------------------------------
+    # Function Name: Encipher
+    # Purpose: Encipher a given plaintext <element>, given the current
+    #          state of the IKA machine
+    # Parameter: element  The plaintext element to be enciphered
+    # Returns: The enciphered element (i.e., the ciphertext element)
+    #--------------------------------------
+    def Encipher(self, element):
+        index1 = self.alphabet.index(element)
+        index2 = (index1 - self.offset) % len(self.alphabet)
+        return self.alphabet[index2]
+
+    # --------------------------------------
     # Function Name: Decipher
     # Purpose: Decipher a given ciphertext <element>, given the current
     #          state of the IKA machine
     # Parameter: element  The ciphertext element to be deciphered
     # Returns: The deciphered element (i.e., the plaintext element)
-    #--------------------------------------
+    # --------------------------------------
     def Decipher(self, element):
         index1 = self.alphabet.index(element)
         index2 = (index1 + self.offset) % len(self.alphabet)
         return self.alphabet[index2]
-        
+
     #--------------------------------------
     # Function Name: Dump
     # Purpose: A debugging function for tracing the state of this class
@@ -219,18 +231,23 @@ class BreakWheel:
         print()
 
 #--------------------------------------
-# Class Name: ManoalphabeticMapping
+# Class Name: MonoalphabeticMapping
 # Purpose: Perform a monoalphabetic mapping of ciphertext strings to their plaintext phrases
 # Field: mono_map  A dictionary mapping ciphertext to plaintext items
 #--------------------------------------
 class MonoalphabeticMapping:
     def __init__(self, mono_map):
-        self.mono_map = mono_map
+        self.decipher_mono_map = mono_map
 
         try:
             self.Verify()
         except:
             raise Exception('MonoalphabeticMapping: verification failed')
+
+        # Create mapping for enciphering
+        self.encipher_mono_map = {}
+        for key, value in mono_map.items():
+            self.encipher_mono_map[value] = key
 
     #--------------------------------------
     # Function Name: Verify
@@ -239,7 +256,7 @@ class MonoalphabeticMapping:
     def Verify(self):
         # Verify that no value is used multiple times
         value_set = set()
-        for key, value in self.mono_map.items():
+        for key, value in self.decipher_mono_map.items():
             if value in value_set:
                 # Duplicate value
                 print('MonoalphabeticMapping: The value "%s" occurs twice' % (value))
@@ -248,24 +265,28 @@ class MonoalphabeticMapping:
         return True
 
     #--------------------------------------
-    # Function Name: IsInMap
-    # Purpose: Determine if a ciphertext element exists in the mapping
-    # Parameter: element  The ciphertext element to look for
-    # Returns: True if <element> is a member of <mono_map>, False otherwise
-    #--------------------------------------
-    def IsInMap(self, element):
-        return (element in self.mono_map)
-        
-    #--------------------------------------
-    # Function Name: ReturnSubstitution
+    # Function Name: ReturnDecipheredValue
     # Purpose: Return decipherment of <element>
     # Parameter: element  The ciphertext element to decipher
     # Returns: The deciphered element (i.e., plaintext element) if exists,
     #          else None
     #--------------------------------------
-    def ReturnSubstitution(self, element):
-        if self.IsInMap(element):
-            return self.mono_map[element]
+    def ReturnDecipheredValue(self, element):
+        if element in self.decipher_mono_map:
+            return self.decipher_mono_map[element]
+        else:
+            return None
+
+    #--------------------------------------
+    # Function Name: ReturnEncipheredValue
+    # Purpose: Return encipherment of <element>
+    # Parameter: element  The plaintext element to encipher
+    # Returns: The enciphered element (i.e., ciphertext element) if exists,
+    #          else None
+    #--------------------------------------
+    def ReturnEncipheredValue(self, element):
+        if element in self.encipher_mono_map:
+            return self.encipher_mono_map[element]
         else:
             return None
 
@@ -277,7 +298,7 @@ class MonoalphabeticMapping:
     def Dump(self, desc):
         print('\nDumping monoalphabet map: %s' % (desc))
 
-        for key, value in self.mono_map.items():
+        for key, value in self.decipher_mono_map.items():
             print("%s -> %s" % (key, value))
         print()
 
@@ -333,6 +354,42 @@ class IkaMachine:
         self.half_rotor.Dump(desc)
 
     #--------------------------------------
+    # Function Name: Encipher
+    # Purpose: Encipher a list of plaintext elements
+    # Parameter: ct  A list of plaintext elements, taken from the set of
+    #            the major and minor alphabet plaintext elements
+    #--------------------------------------
+    def Encipher(self, pt):
+        complete_ct = ''
+        count = 0
+        for e in pt:
+            if self.trace:
+                print('-----------------------------------------')
+            sub = self.mono_map.ReturnEncipheredValue(e)
+            if (sub == None):
+                # Not found in minor alphabet, decipher with major alphabet
+                ct = self.half_rotor.Encipher(e)
+                if self.trace:
+                    print('%d: %s -> %s' % (count, e, pt))  #debug
+                complete_ct = complete_ct + ct + ' '
+            else:
+                # Found in minor alphabet
+                complete_ct = complete_ct + sub + ' '
+                if self.trace:
+                    print('%d: %s -> %s' % (count, e, sub))  #debug
+
+            count = count + 1
+            slide = self.break_wheel.ReturnSlide()
+            self.half_rotor.IncrementOffset(slide);
+            if self.trace:
+                print('slide=%d' % (slide)) #debug
+
+            if (self.trace):
+                self.TraceComponents('After deciphering')
+
+        return complete_ct
+
+    #--------------------------------------
     # Function Name: Decipher
     # Purpose: Decipher a list of ciphertext elements
     # Parameter: ct  A list of ciphertext elements, taken from the set of 
@@ -344,7 +401,7 @@ class IkaMachine:
         for e in ct:
             if self.trace:
                 print('-----------------------------------------')
-            sub = self.mono_map.ReturnSubstitution(e)
+            sub = self.mono_map.ReturnDecipheredValue(e)
             if (sub == None):
                 # Not found in minor alphabet, decipher with major alphabet
                 pt = self.half_rotor.Decipher(e)
@@ -487,6 +544,54 @@ class TestIka(unittest.TestCase):
         for i in range(len(expected_pt_end)):
             ind = len(pt) - len(expected_pt_end) + i
             self.assertEqual(pt[ind], expected_pt_end[i])
+
+    def test_encipher_01(self):
+        major_alphabet = ['KI', 'HI', 'WO', 'MI', 'KE', 'TO', 'SA', 'KO', 'SE', 'HO',
+                          'MU', 'NO', 'YO', 'RU', 'KA', 'FU', 'RE', 'RA', 'YA', 'SI',
+                          'HA', 'TU', 'N', 'U', 'A', 'I', 'MA', 'TE', 'WA', 'MO',
+                          'ME', 'KU', 'E', 'NA', 'TA', 'NI', 'YU', 'TI', 'RI', 'NE',
+                          'HE', 'SU']
+        minor_alphabet = {'RO': 'parenthesis', 'WI': 'RO', 'SO': 'Nigori', 'NU': 'Hannigori',
+                          'O': 'SO', 'WE': 'NU', 'X': 'Stop'}
+        pt = ['RE', 'N', 'KO', 'A', 'U', 'E', 'N', 'SI', 'U', 'NI', 'KA',
+              'N', 'SU', 'RU', 'YA', 'TU', 'KA', 'A', 'N', 'KI', 'SI',
+              'A', 'TO', 'RI', 'SI', 'MA', 'RI', 'HA', 'TO', 'KU', 'NI',
+              'KE', 'A', 'N', 'SI', 'A', 'U', 'NI', 'SU', 'HE', 'A', 'KI',
+              'MU', 'NE', 'HI', 'TO', 'KI', 'U', 'KI', 'HA', 'MI', 'KE',
+              'I', 'HO', 'KI', 'YO', 'KU', 'TE', 'U', 'YO', 'RI', 'TI',
+              'HO', 'U', 'TE', 'U', 'KA', 'N', 'Nigori', 'TE', 'KA', 'SA',
+              'NE', 'TE', 'NE', 'U', 'SI', 'TU', 'SE', 'RI', 'TU', 'I',
+              'MA', 'SI', 'SU', 'Stop', 'TO', 'U', 'Stop', 'YO', 'RI',
+              'KI', 'SI', 'A', 'HA', 'TU', 'HE', 'Hannigori', 'U', 'SE',
+              'RA', 'RU', 'RU', 'HA', 'A', 'WA', 'I', 'SO', 'NO', 'TE',
+              'TU', 'TU', 'A', 'KI', 'NI', 'KA', 'TU', 'YA', 'KE', 'KU',
+              'NI', 'ME', 'NE', 'KU', 'A', 'N', 'KA', 'A', 'WA', 'TO',
+              'NO', 'RE', 'N', 'RA', 'KU', 'NI', 'RI', 'U', 'I', 'SE',
+              'RA', 'RU', 'RU', 'TO', 'TO', 'MO', 'NI', 'NA', 'I', 'MU',
+              'KO', 'N', 'NE', 'HA', 'TO', 'U', 'HO', 'U', 'WO', 'KE',
+              'I', 'YU', 'SI', 'SO', 'NO', 'TU', 'TO', 'A', 'RE', 'N',
+              'RA', 'KU', 'WO', 'TO', 'RA', 'RU', 'RU', 'YO', 'U', 'I',
+              'TA', 'SI', 'TA', 'SI', 'MO', 'A', 'TA', 'YO', 'RI']
+        inactive_pin_list = [5, 8, 11, 17, 22, 25, 26, 29, 34, 37, 41, 44, 46]
+
+        try:
+            ika = IkaMachine(major_alphabet, 10, minor_alphabet, 47, inactive_pin_list, trace=False)
+        except:
+            print('Exception caught, check output')
+            return
+        ct_string = ika.Encipher(pt)
+        ct = ct_string.split()
+        self.assertEqual(len(pt), len(ct))
+
+        expected_ct_start = ['SA', 'NO', 'TI', 'NO', 'SE', 'RE', 'KE', 'KI']
+        expected_ct_end = ['YA', 'YO', 'TU', 'NE', 'N']
+
+        for i in range(len(expected_ct_start)):
+            self.assertEqual(ct[i], expected_ct_start[i])
+
+        for i in range(len(expected_ct_end)):
+            ind = len(ct) - len(expected_ct_end) + i
+            self.assertEqual(ct[ind], expected_ct_end[i])
 
 if __name__ == "__main__":
     unittest.main()
