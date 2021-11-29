@@ -8,12 +8,28 @@ def main():
     parser.add_argument('data',
                         help='JSON file containing IKA data'
                         )
+    parser.add_argument('--decipher',
+                        action='store_true',
+                        help='Decipher the ciphertext into plaintext'
+                        )
+    parser.add_argument('--encipher',
+                        action='store_true',
+                        help='Encipher the plaintext into ciphertext'
+                        )
     parser.add_argument('-t', '--trace',
                         action='store_true',
                         dest='trace',
                         help='Trace IKA components (for debugging purposes)'
                         )    
     args = parser.parse_args()
+
+    if args.decipher and args.encipher:
+        print('Error: both --decipher and --encipher were specified')
+        sys.exit(-1)
+
+    if not args.decipher and not args.encipher:
+        print('Error: neither --decipher nor --encipher were specified')
+        sys.exit(-1)
 
     # Opening JSON file
     f = open(args.data)
@@ -34,8 +50,12 @@ def main():
         print('Exception caught, exiting')
         sys.exit(-1)
 
-    pt = ika.Decipher(data['ct'])
-    print("\npt = '%s'" % (pt))
+    if args.decipher:
+        pt = ika.Decipher(data['ct'])
+        print("\npt = '%s'" % (pt))
+    elif args.encipher:
+        ct = ika.Encipher(data['pt'])
+        print("\nct = '%s'" % (ct))
 
 if __name__ == "__main__":
     main()
