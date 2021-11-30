@@ -393,7 +393,7 @@ class IkaMachine:
                 print('slide=%d' % (slide)) #debug
 
             if (self.trace):
-                self.TraceComponents('After deciphering')
+                self.TraceComponents('After enciphering')
 
         return complete_ct
 
@@ -574,7 +574,7 @@ class TestIka(unittest.TestCase):
         self.assertEqual(len(pt), len(ct))
 
         expected_pt_start = ['RE', 'N', 'KO', 'A', 'U', 'E', 'N', 'SI']
-        expected_pt_end = ['MA', 'TA', 'KU', 'SA']
+        expected_pt_end = ['KA', 'A', 'N', 'KI']
 
         for i in range(len(expected_pt_start)):
             self.assertEqual(pt[i], expected_pt_start[i])
