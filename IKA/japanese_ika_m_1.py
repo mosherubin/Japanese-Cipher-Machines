@@ -516,6 +516,11 @@ class TestIka(unittest.TestCase):
         slide = break_wheel.ReturnSlide()
         self.assertEqual(slide, 10)
 
+    # --------------------------------------
+    # Name: test_decipher_01
+    # Purpose: Sanity test for deciphering, major alphabet and ciphertext are all
+    #          uppercase.
+    # --------------------------------------
     def test_decipher_01(self):
         major_alphabet = ['KI', 'HI', 'WO', 'MI', 'KE', 'TO', 'SA', 'KO', 'SE', 'HO',
                           'MU', 'NO', 'YO', 'RU', 'KA', 'FU', 'RE', 'RA', 'YA', 'SI',
@@ -563,6 +568,11 @@ class TestIka(unittest.TestCase):
             ind = len(pt) - len(expected_pt_end) + i
             self.assertEqual(pt[ind], expected_pt_end[i])
 
+    # --------------------------------------
+    # Name: test_decipher_02
+    # Purpose: Sanity test for deciphering, major alphabet and ciphertext contain
+    #          both uppercase and lowercase.
+    # --------------------------------------
     def test_decipher_02(self):
         major_alphabet = ['ki', 'hi', 'wo', 'mi', 'ke', 'to', 'sa', 'ko', 'se', 'ho',
                           'MU', 'NO', 'YO', 'RU', 'KA', 'FU', 'RE', 'RA', 'YA', 'SI',
@@ -593,6 +603,11 @@ class TestIka(unittest.TestCase):
             ind = len(pt) - len(expected_pt_end) + i
             self.assertEqual(pt[ind], expected_pt_end[i])
 
+    # --------------------------------------
+    # Name: test_encipher_01
+    # Purpose: Sanity test for enciphering, major alphabet and ciphertext are
+    #          all in uppercase.
+    # --------------------------------------
     def test_encipher_01(self):
         major_alphabet = ['KI', 'HI', 'WO', 'MI', 'KE', 'TO', 'SA', 'KO', 'SE', 'HO',
                           'MU', 'NO', 'YO', 'RU', 'KA', 'FU', 'RE', 'RA', 'YA', 'SI',
