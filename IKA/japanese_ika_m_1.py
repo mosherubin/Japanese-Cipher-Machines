@@ -234,37 +234,47 @@ class BreakWheel:
 #--------------------------------------
 # Class Name: MonoalphabeticMapping
 # Purpose: Perform a monoalphabetic mapping of ciphertext strings to their plaintext phrases
-# Field: mono_map  A dictionary mapping ciphertext to plaintext items
+# Field: mono_map  A dictionary mapping plaintext to ciphertext items
 #--------------------------------------
 class MonoalphabeticMapping:
-    def __init__(self, mono_map):
+    def __init__(self, encipher_mono_map):
+        self.encipher_mono_map = {}
+        for key, value in encipher_mono_map.items():
+            self.encipher_mono_map[key.upper()] = value.upper()
+
+        # Create mapping for deciphering
         self.decipher_mono_map = {}
-        for key, value in mono_map.items():
-            self.decipher_mono_map[key.upper()] = value.upper()
+        for key, value in encipher_mono_map.items():
+            self.decipher_mono_map[value.upper()] = key.upper()
 
         try:
             self.Verify()
         except:
             raise Exception('MonoalphabeticMapping: verification failed')
 
-        # Create mapping for enciphering
-        self.encipher_mono_map = {}
-        for key, value in mono_map.items():
-            self.encipher_mono_map[value.upper()] = key.upper()
-
     #--------------------------------------
     # Function Name: Verify
     # Purpose: Validate the data definitions passed to the constructor
     #--------------------------------------
     def Verify(self):
-        # Verify that no value is used multiple times
+        # Verify that no value is used multiple times in <decipher_mono_map>
+        value_set = set()
+        for key, value in self.encipher_mono_map.items():
+            if value in value_set:
+                # Duplicate value
+                print('MonoalphabeticMapping: The value "%s" occurs twice in encipher_mono_map' % (value))
+                raise Exception('MonoalphabeticMapping: Duplicate value encountered in encipher_mono_map ("%s")' % (value))
+            value_set.add(value)
+
+        # Verify that no value is used multiple times in <decipher_mono_map>
         value_set = set()
         for key, value in self.decipher_mono_map.items():
             if value in value_set:
                 # Duplicate value
-                print('MonoalphabeticMapping: The value "%s" occurs twice' % (value))
-                raise Exception('MonoalphabeticMapping: Duplicate value encountered ("%s")' % (value))
+                print('MonoalphabeticMapping: The value "%s" occurs twice in encipher_mono_map' % (value))
+                raise Exception('MonoalphabeticMapping: Duplicate value encountered in encipher_mono_map ("%s")' % (value))
             value_set.add(value)
+
         return True
 
     #--------------------------------------
@@ -324,7 +334,7 @@ class MonoalphabeticMapping:
 # Field: number_of_pins  The total number of pins defined for the break wheel
 # Field: inactive_pins  A list of integers denoting the inactive pins (the
 #        numbers are 1-based, not 0-based)
-# Field: half_rotor  Instatiated Damm half rotor object
+# Field: half_rotor  Instantiated Damm half rotor object
 # Field: break_wheel  Instantiated break wheel object
 #--------------------------------------
 class IkaMachine:
@@ -512,8 +522,8 @@ class TestIka(unittest.TestCase):
                           'HA', 'TU', 'N', 'U', 'A', 'I', 'MA', 'TE', 'WA', 'MO',
                           'ME', 'KU', 'E', 'NA', 'TA', 'NI', 'YU', 'TI', 'RI', 'NE',
                           'HE', 'SU']
-        minor_alphabet = {'RO': 'parenthesis', 'WI': 'RO', 'SO': 'Nigori', 'NU': 'Hannigori',
-                          'O': 'SO', 'WE': 'NU', 'X': 'Stop'}
+        minor_alphabet_encipher = {'parenthesis': 'RO', 'RO': 'WI', 'Nigori': 'SO', 'Hannigori': 'NU',
+                                   'SO': 'O', 'NU': 'WE', 'Stop': 'X'}
         ct = ['SA', 'NO', 'TI', 'NO', 'SE', 'RE', 'KE', 'KI', 'WO', 'RU',
               'NA', 'HE', 'RE', 'WA', 'E', 'TA', 'MA', 'TA', 'KU', 'SA',
               'A', 'TE', 'KO', 'NE', 'SI', 'A', 'NI', 'FU', 'SU', 'A',
@@ -535,9 +545,9 @@ class TestIka(unittest.TestCase):
               'WA', 'YO', 'MA', 'HO', 'YA', 'YO', 'TU', 'NE', 'N']
         inactive_pin_list = [5, 8, 11, 17, 22, 25, 26, 29, 34, 37, 41, 44, 46]
         try:
-            ika = IkaMachine(major_alphabet, 10, minor_alphabet, 47, inactive_pin_list, trace=False)
+            ika = IkaMachine(major_alphabet, 10, minor_alphabet_encipher, 47, inactive_pin_list, trace=False)
         except:
-            print('Exception caught, check output')
+            print('test_decipher_01: Exception caught, check output')
             return
         pt_string = ika.Decipher(ct)
         pt = pt_string.split()
@@ -559,15 +569,15 @@ class TestIka(unittest.TestCase):
                           'ha', 'tu', 'n', 'u', 'a', 'i', 'ma', 'te', 'wa', 'mo',
                           'ME', 'KU', 'E', 'NA', 'TA', 'NI', 'YU', 'TI', 'RI', 'NE',
                           'he', 'su']
-        minor_alphabet = {'RO': 'parenthesis', 'WI': 'RO', 'SO': 'nigori', 'NU': 'Hannigori',
-                          'o': 'so', 'we': 'nu', 'x': 'stop'}
+        minor_alphabet_encipher = {'parenthesis': 'RO', 'RO': 'WI', 'nigori': 'SO', 'Hannigori': 'NU',
+                                   'so': 'o', 'nu': 'we', 'stop': 'x'}
         ct = ['SA', 'NO', 'TI', 'NO', 'SE', 'RE', 'KE', 'KI', 'WO', 'RU',
               'NA', 'HE', 'RE', 'WA', 'E', 'TA', 'MA', 'TA', 'KU', 'SA']
         inactive_pin_list = [5, 8, 11, 17, 22, 25, 26, 29, 34, 37, 41, 44, 46]
         try:
-            ika = IkaMachine(major_alphabet, 10, minor_alphabet, 47, inactive_pin_list, trace=False)
+            ika = IkaMachine(major_alphabet, 10, minor_alphabet_encipher, 47, inactive_pin_list, trace=False)
         except:
-            print('Exception caught, check output')
+            print('test_decipher_02: Exception caught, check output')
             return
         pt_string = ika.Decipher(ct)
         pt = pt_string.split()
@@ -589,8 +599,8 @@ class TestIka(unittest.TestCase):
                           'HA', 'TU', 'N', 'U', 'A', 'I', 'MA', 'TE', 'WA', 'MO',
                           'ME', 'KU', 'E', 'NA', 'TA', 'NI', 'YU', 'TI', 'RI', 'NE',
                           'HE', 'SU']
-        minor_alphabet = {'RO': 'parenthesis', 'WI': 'RO', 'SO': 'Nigori', 'NU': 'Hannigori',
-                          'O': 'SO', 'WE': 'NU', 'X': 'Stop'}
+        minor_alphabet_encipher = {'parenthesis': 'RO', 'RO': 'WI', 'Nigori': 'SO', 'Hannigori': 'NU',
+                                   'SO': 'O', 'NU': 'WE', 'Stop': 'X'}
         pt = ['RE', 'N', 'KO', 'A', 'U', 'E', 'N', 'SI', 'U', 'NI', 'KA',
               'N', 'SU', 'RU', 'YA', 'TU', 'KA', 'A', 'N', 'KI', 'SI',
               'A', 'TO', 'RI', 'SI', 'MA', 'RI', 'HA', 'TO', 'KU', 'NI',
@@ -613,9 +623,9 @@ class TestIka(unittest.TestCase):
         inactive_pin_list = [5, 8, 11, 17, 22, 25, 26, 29, 34, 37, 41, 44, 46]
 
         try:
-            ika = IkaMachine(major_alphabet, 10, minor_alphabet, 47, inactive_pin_list, trace=False)
+            ika = IkaMachine(major_alphabet, 10, minor_alphabet_encipher, 47, inactive_pin_list, trace=False)
         except:
-            print('Exception caught, check output')
+            print('test_encipher_01: Exception caught, check output')
             return
         ct_string = ika.Encipher(pt)
         ct = ct_string.split()

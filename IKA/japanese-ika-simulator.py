@@ -42,7 +42,7 @@ def main():
         ika = japanese_ika_m_1.IkaMachine(
             data['major_alphabet'],
             data['starting_offset'],
-            data['minor_alphabet'],
+            data['minor_alphabet_encipher'],
             data['number_of_pins'],
             data['inactive_pin_list'],
         trace=args.trace)
