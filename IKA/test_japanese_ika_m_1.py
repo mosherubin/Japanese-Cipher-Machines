@@ -1,6 +1,12 @@
 import unittest
 import japanese_ika_m_1 as ika
 
+# The following global variables (all prefixed by "christensen_")
+# were taken from Chris Christensen's article entitled
+# "The Imperial Japanese navy IKA Cipher Machine" in "Proceedings
+# of the 4th International Conference on Historical Cryptology,
+# HistoCrypt 2021" (https://ecp.ep.liu.se/index.php/histocrypt/article/view/155).
+
 christensen_major_alphabet = [
     'KI', 'HI', 'WO', 'MI', 'KE', 'TO', 'SA', 'KO', 'SE', 'HO',
     'MU', 'NO', 'YO', 'RU', 'KA', 'FU', 'RE', 'RA', 'YA', 'SI',
@@ -134,6 +140,33 @@ class TestIka(unittest.TestCase):
         break_wheel.SetPinNumber(1)
         slide = break_wheel.ReturnSlide()
         self.assertEqual(slide, 10)
+
+    # --------------------------------------
+    # Name: test_breakwheel_05
+    # Purpose: Specify zero pins, verify an exception is returned
+    # --------------------------------------
+    def test_breakwheel_05(self):
+        number_of_pins = 0
+        inactive_pin_list = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertRaises(Exception, ika.BreakWheel, number_of_pins, inactive_pin_list)
+
+    # --------------------------------------
+    # Name: test_breakwheel_06
+    # Purpose: Specify more inactive pins than total pins, verify an exception is returned
+    # --------------------------------------
+    def test_breakwheel_06(self):
+        number_of_pins = 5
+        inactive_pin_list = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertRaises(Exception, ika.BreakWheel, number_of_pins, inactive_pin_list)
+
+    # --------------------------------------
+    # Name: test_breakwheel_07
+    # Purpose: Specify duplicate inactive pins, verify an exception is returned
+    # --------------------------------------
+    def test_breakwheel_07(self):
+        number_of_pins = christensen_total_number_pins
+        inactive_pin_list = [2, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertRaises(Exception, ika.BreakWheel, number_of_pins, inactive_pin_list)
 
     # --------------------------------------
     # Name: test_decipher_01

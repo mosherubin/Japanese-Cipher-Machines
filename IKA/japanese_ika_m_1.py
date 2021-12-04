@@ -16,10 +16,7 @@ class DammHalfRotor:
         self.alphabet = [x.upper() for x in alphabet]
         self.offset = offset
 
-        try:
-            self.Verify()
-        except:
-            raise Exception('MonoalphabeticMapping: verification failed')
+        self.Verify()
 
         # Determine longest alphabet element
         self.max_element_length = 0
@@ -124,17 +121,26 @@ class BreakWheel:
         self.inactive_pins = inactive_pins
         self.pin_number = 1
 
-        try:
-            self.Verify()
-        except:
-            raise Exception('BreakWheel: verification failed')
+        self.Verify()
 
     #--------------------------------------
     # Function Name: Verify
     # Purpose: Validate the data definitions passed to the constructor
     #--------------------------------------
     def Verify(self):
-        return True
+        if self.total_num_pins < 1:
+            raise Exception('BreakWheel has invalid number of pins (%d)' % self.total_num_pins)
+
+        if len(self.inactive_pins) > self.total_num_pins:
+            raise Exception('BreakWheel has more inactive pins (%d) than total pins (%d)' %
+                (len(self.inactive_pins), self.total_num_pins))
+
+        # Make sure there are no duplicate elements in self.inactive_pins
+        pin_set = set()
+        for i in self.inactive_pins:
+            if i in pin_set:
+                raise Exception('BreakWheel: Duplicate inactive pin "%d" encountered' % (i))
+            pin_set.add(i)
 
     #--------------------------------------
     # Function Name: SetPinNumber
@@ -245,10 +251,7 @@ class MonoalphabeticMapping:
         for key, value in encipher_mono_map.items():
             self.decipher_mono_map[value.upper()] = key.upper()
 
-        try:
-            self.Verify()
-        except:
-            raise Exception('MonoalphabeticMapping: verification failed')
+        self.Verify()
 
     #--------------------------------------
     # Function Name: Verify
