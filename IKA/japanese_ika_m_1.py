@@ -113,7 +113,8 @@ class DammHalfRotor:
 # Field: pin_number  The current pin position of the break wheel.  It should
 #        always be in the range of 1 to <total_num_pins>.
 # Note: As mentioned above, the pin numbers are 1-based indexes, not
-#       0-based offsets.
+#       0-based offsets.  This was done because the cryptographer historically
+#       refers to the pins starting with 1.
 #--------------------------------------
 class BreakWheel:
     def __init__(self, total_num_pins, inactive_pins):
@@ -128,6 +129,10 @@ class BreakWheel:
     # Purpose: Validate the data definitions passed to the constructor
     #--------------------------------------
     def Verify(self):
+        for i in self.inactive_pins:
+            if not isinstance(i, int):
+                raise Exception('Non-integer inactive pin (%d) encountered' % i)
+
         if self.total_num_pins < 1:
             raise Exception('BreakWheel has invalid number of pins (%d)' % self.total_num_pins)
 
@@ -135,12 +140,21 @@ class BreakWheel:
             raise Exception('BreakWheel has more inactive pins (%d) than total pins (%d)' %
                 (len(self.inactive_pins), self.total_num_pins))
 
-        # Make sure there are no duplicate elements in self.inactive_pins
-        pin_set = set()
+        # Inactive pin numbers must be in range of 1 - self.total_num_pins
         for i in self.inactive_pins:
-            if i in pin_set:
+            if (i < 0) or (i > self.total_num_pins):
+                raise Exception('BreakWheel: Inactive pin number (%d) in out of range (should be 1-%d' % (self.total_num_pins))
+
+        # Make sure there are no duplicate elements in self.inactive_pins
+        inactive_pin_set = set()
+        for i in self.inactive_pins:
+            if i in inactive_pin_set:
                 raise Exception('BreakWheel: Duplicate inactive pin "%d" encountered' % (i))
-            pin_set.add(i)
+            inactive_pin_set.add(i)
+
+        # Verify there is at least one (1) active pin
+        if self.total_num_pins - len(inactive_pin_set) == 0:
+            raise Exception('BreakWheel: There are no active pins')
 
     #--------------------------------------
     # Function Name: SetPinNumber

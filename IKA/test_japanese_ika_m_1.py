@@ -169,6 +169,42 @@ class TestIka(unittest.TestCase):
         self.assertRaises(Exception, ika.BreakWheel, number_of_pins, inactive_pin_list)
 
     # --------------------------------------
+    # Name: test_breakwheel_08
+    # Purpose: Specify an inactive pin less than 1, verify an exception is returned
+    # --------------------------------------
+    def test_breakwheel_08(self):
+        number_of_pins = christensen_total_number_pins
+        inactive_pin_list = [2, 2, 3, 4, 0, 6, 7, 8, 9, 10]
+        self.assertRaises(Exception, ika.BreakWheel, number_of_pins, inactive_pin_list)
+
+    # --------------------------------------
+    # Name: test_breakwheel_09
+    # Purpose: Specify an inactive pin greater than <self.total_num_pins>, verify an exception is returned
+    # --------------------------------------
+    def test_breakwheel_09(self):
+        number_of_pins = christensen_total_number_pins
+        inactive_pin_list = [2, 2, 3, 4, 5, 6, christensen_total_number_pins + 1, 8, 9, 10]
+        self.assertRaises(Exception, ika.BreakWheel, number_of_pins, inactive_pin_list)
+
+    # --------------------------------------
+    # Name: test_breakwheel_10
+    # Purpose: Define a breakwheel with zero (0) active pins, verify an exception is returned
+    # --------------------------------------
+    def test_breakwheel_10(self):
+        number_of_pins = 10
+        inactive_pin_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.assertRaises(Exception, ika.BreakWheel, number_of_pins, inactive_pin_list)
+
+    # --------------------------------------
+    # Name: test_breakwheel_11
+    # Purpose: Define a non-integer inactive pin number, verify an exception is returned
+    # --------------------------------------
+    def test_breakwheel_11(self):
+        number_of_pins = 10
+        inactive_pin_list = [1, 2.9, 3, 4, 5, 6.7, 7, 8, 9, 10]
+        self.assertRaises(Exception, ika.BreakWheel, number_of_pins, inactive_pin_list)
+
+    # --------------------------------------
     # Name: test_decipher_01
     # Purpose: Sanity test for deciphering, major alphabet and ciphertext are all
     #          uppercase.
