@@ -205,22 +205,142 @@ class TestIka(unittest.TestCase):
         self.assertRaises(Exception, ika.BreakWheel, number_of_pins, inactive_pin_list)
 
     # --------------------------------------
+    # Name: test_damm_half_rotor_01
+    # Purpose: Sanity test for a valid half rotor
+    # --------------------------------------
+    def test_damm_half_rotor_01(self):
+        alphabet = ['A', 'B', 'C', 'D', 'E']
+        offset = 2
+        self.assertTrue(ika.DammHalfRotor (alphabet, offset))
+
+    # --------------------------------------
+    # Name: test_damm_half_rotor_02
+    # Purpose: Pass empty alphabet, expect exception
+    # --------------------------------------
+    def test_damm_half_rotor_02(self):
+        alphabet = []
+        offset = 2
+        self.assertRaises(Exception, ika.DammHalfRotor, alphabet, offset)
+
+    # --------------------------------------
+    # Name: test_damm_half_rotor_03
+    # Purpose: Pass duplicate element in alphabet, expect exception
+    # --------------------------------------
+    def test_damm_half_rotor_03(self):
+        alphabet = ['A', 'B', 'C', 'D', 'C', 'E']
+        offset = 2
+        self.assertRaises(Exception, ika.DammHalfRotor, alphabet, offset)
+
+    # --------------------------------------
+    # Name: test_damm_half_rotor_04
+    # Purpose: Pass an empty string element in alphabet, expect exception
+    # --------------------------------------
+    def test_damm_half_rotor_04(self):
+        alphabet = ['A', 'B', 'C', 'D', '', 'E']
+        offset = 2
+        self.assertRaises(Exception, ika.DammHalfRotor, alphabet, offset)
+
+    # --------------------------------------
+    # Name: test_damm_half_rotor_05
+    # Purpose: Pass a negative offset value, expect exception
+    # --------------------------------------
+    def test_damm_half_rotor_05(self):
+        alphabet = ['A', 'B', 'C', 'D', '', 'E']
+        offset = -5
+        self.assertRaises(Exception, ika.DammHalfRotor, alphabet, offset)
+
+    # --------------------------------------
+    # Name: test_damm_half_rotor_06
+    # Purpose: Pass an offset value that is too large, expect exception
+    # --------------------------------------
+    def test_damm_half_rotor_06(self):
+        alphabet = ['A', 'B', 'C', 'D', '', 'E']
+        offset = len(alphabet) + 3
+        self.assertRaises(Exception, ika.DammHalfRotor, alphabet, offset)
+
+    # --------------------------------------
+    # Name: test_damm_half_rotor_07
+    # Purpose: Sanity test deciphering with a half rotor
+    # --------------------------------------
+    def test_damm_half_rotor_07(self):
+        alphabet = ['A', 'B', 'C', 'D', 'E']
+        offset = 2
+        d = ika.DammHalfRotor (alphabet, offset)
+        self.assertTrue(d)
+        self.assertTrue(d.Decipher('A') == 'C')
+
+    # --------------------------------------
+    # Name: test_damm_half_rotor_08
+    # Purpose: Attempt to decipher a non-valid element, expect exception
+    # --------------------------------------
+    def test_damm_half_rotor_08(self):
+        alphabet = ['A', 'B', 'C', 'D', 'E']
+        offset = 2
+        d = ika.DammHalfRotor (alphabet, offset)
+        self.assertTrue(d)
+        self.assertRaises(Exception, d.Decipher, 'Z')
+
+    # --------------------------------------
+    # Name: test_monoalph_01
+    # Purpose: Sanity test of valid monoalphabetic mapping
+    # --------------------------------------
+    def test_monoalph_01(self):
+        mapping = {
+            'A': 'YZ',
+            'BC': 'X',
+            'DEF': 'W',
+            'G': 'TUV',
+            'H': 'S'
+        }
+        d = ika.MonoalphabeticMapping(mapping)
+        self.assertTrue(d)
+        self.assertTrue(d.Encipher('A') == 'YZ')
+        self.assertTrue(d.Encipher('Q') == None)
+        self.assertTrue(d.Encipher('') == None)
+        self.assertTrue(d.Decipher('W') == 'DEF')
+        self.assertTrue(d.Decipher('') == None)
+
+    # --------------------------------------
+    # Name: test_monoalph_02
+    # Purpose: Define key of empty string, expect exception
+    # --------------------------------------
+    def test_monoalph_02(self):
+        mapping = {
+            'A': 'YZ',
+            '': 'X',
+            'DEF': 'W',
+            'G': 'TUV',
+            'H': 'X'
+        }
+        self.assertRaises(Exception, ika.MonoalphabeticMapping, mapping)
+
+    # --------------------------------------
+    # Name: test_monoalph_03
+    # Purpose: Define value of empty string, expect exception
+    # --------------------------------------
+    def test_monoalph_03(self):
+        mapping = {
+            'A': 'YZ',
+            'B': 'X',
+            'DEF': 'W',
+            'G': '',
+            'H': 'S'
+        }
+        self.assertRaises(Exception, ika.MonoalphabeticMapping, mapping)
+
+    # --------------------------------------
     # Name: test_decipher_01
     # Purpose: Sanity test for deciphering, major alphabet and ciphertext are all
     #          uppercase.
     # --------------------------------------
     def test_decipher_01(self):
-        try:
-            ikaMachine = ika.IkaMachine(
-                christensen_major_alphabet,
-                10,
-                christensen_minor_alphabet_encipher,
-                christensen_total_number_pins,
-                christensen_inactive_pin_list,
-                trace=False)
-        except:
-            print('test_decipher_01: Exception caught, check output')
-            return
+        ikaMachine = ika.IkaMachine(
+            christensen_major_alphabet,
+            10,
+            christensen_minor_alphabet_encipher,
+            christensen_total_number_pins,
+            christensen_inactive_pin_list,
+            trace=False)
         pt_string = ikaMachine.Decipher(christensen_ct)
         pt = pt_string.split()
         self.assertEqual(len(pt), len(christensen_ct))
@@ -251,17 +371,13 @@ class TestIka(unittest.TestCase):
                                    'so': 'o', 'nu': 'we', 'stop': 'x'}
         ct = ['SA', 'NO', 'Ti', 'NO', 'SE', 're', 'KE', 'KI', 'WO', 'rU',
               'NA', 'he', 'RE', 'WA', 'e', 'ta', 'MA', 'TA', 'Ku', 'sA']
-        try:
-            ikaMachine = ika.IkaMachine(
-                major_alphabet,
-                10,
-                minor_alphabet_encipher,
-                christensen_total_number_pins,
-                christensen_inactive_pin_list,
-                trace=False)
-        except:
-            print('test_decipher_02: Exception caught, check output')
-            return
+        ikaMachine = ika.IkaMachine(
+            major_alphabet,
+            10,
+            minor_alphabet_encipher,
+            christensen_total_number_pins,
+            christensen_inactive_pin_list,
+            trace=False)
         pt_string = ikaMachine.Decipher(ct)
         pt = pt_string.split()
         self.assertEqual(len(pt), len(ct))
