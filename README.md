@@ -1,6 +1,4 @@
-======
-Japanese Cipher Machines (1930-1945)
-======
+# Japanese Cipher Machines (1930-1945)
 
 Simulations of Japanese cipher machines from 1930-1945
 ------------------------------------------------------
