@@ -21,15 +21,11 @@ This will help you understand the terminology used in the documentation.
 
 ## Requirements
 
-``Purple`` was written in Python_ 3, specifically 3.3.2, and has no other external
+The Japanese cipher machines and components in this library were was written in Python 3, starting with version 3.7.0, and has no other external
 dependencies.
 
 ## Installation
 
-To run the unit tests::
-
-   $ cd where-you-extracted-purple
-   $ python -m unittest discover
 
 
 ## Initial Settings Syntax
