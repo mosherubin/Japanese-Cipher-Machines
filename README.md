@@ -12,10 +12,10 @@
 
 This project is a Python 3 library for simulating several Japanese cipher 
 machines used by the Japanese military and diplomatic corps between the years
-1930-1945.  The library also includes basic and generic cryptographic
-components used to implement the aforementioned cipher machines.
+1930-1945.  The library includes reusable cryptographic components used to 
+implement the aforementioned cipher machines.
 
-If you are brand new to the Japanese cipher machines listed in this documentation, 
+If you are new to the Japanese cipher machines listed in this documentation, 
 please skip down to the references section and familiarize yourself with the devices. 
 This will help you understand the terminology used in the documentation.
 
@@ -92,29 +92,6 @@ the top of this file.
 
 ## References
 
-#. *PURPLE Revealed: Simulation and Computer-aided Cryptanalysis of Angooki
-   Taipu B*, by Wes Freeman, Geoff Sullivan, and Frode Weierud. This paper
-   was published in Cryptologia, Volume 27, Issue 1, January, 2003, pp. 1-43.
-#. Frode Weierud's CryptoCellar page: `The PURPLE Machine`_
-#. Wikipedia Article: `PURPLE Machine`_
-
-The paper in reference 1 is also available here:
-http://cryptocellar.web.cern.ch/cryptocellar/pubs/PurpleRevealed.pdf
-
-This simulator would not have been possible without Frode Weierud's
-CryptoCellar page and the detailed explanations and analysis found in reference
-1. The author is also deeply grateful for email discussions with Frode Weierud
-and Geoff Sullivan who provided me with plaintext, advice, and encouragement.
-
-The ``Purple`` simulator's operation was checked against the simulator found in
-reference 2.
-
-
-.. _PURPLE Machine: http://en.wikipedia.org/wiki/Purple_(cipher_machine)
-.. _Python: http://www.python.org
-.. _Python Package Index: http://pypi.python.org/pypi/purple/
-.. _virtualenv: http://www.virtualenv.org/
-.. _pip: http://www.pip-installer.org
-.. _Purple Bitbucket page: https://bitbucket.org/bgneal/purple/
-.. _Mercurial: http://mercurial.selenic.com/
-.. _The PURPLE Machine: http://cryptocellar.web.cern.ch/cryptocellar/simula/purple/
+1. *The Imperial Japanese Navy IKA Cipher Machine*, by Chris Christensen.  This paper was published in the Proceedings of the 4th International Conference on Historical Cryptology, HistoCrypt 2021, pp. 38-47 ([downloadable here](https://ecp.ep.liu.se/index.php/histocrypt/article/view/155), last accessed 19 December 2021). 
+2. *Big Machines: Cryptographic Security of the German Enigma, Japanese PURPLE, and US SIGABA/ECM Cipher machines* (2018), by Stephen J. Kelley, pp. 43-50.
+3. *Development of the First Japanese Cipher Machine: RED*, by Satoshi Tomokiyo, http://cryptiana.web.fc2.com/code/redciphermachine.htm (last accessed: 19 December 2021).
