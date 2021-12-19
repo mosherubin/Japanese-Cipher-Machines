@@ -1,7 +1,6 @@
 # Japanese Cipher Machines (1930-1945)
 
-Simulations of Japanese cipher machines from 1930-1945
-------------------------------------------------------
+## Simulations of Japanese cipher machines from 1930-1945
 
 |   |  |
 | ------------- | ------------- |
@@ -16,23 +15,16 @@ machines used by the Japanese military and diplomatic corps between the years
 1930-1945.  The library also includes basic and generic cryptographic
 components used to implement the aforementioned cipher machines.
 
-This project is a Python 3 library and command-line utility for encrypting and
-decrypting text by simulating the operation of an actual PURPLE machine.
+If you are brand new to the Japanese cipher machines listed in this documentation, 
+please skip down to the references section and familiarize yourself with the devices. 
+This will help you understand the terminology used in the documentation.
 
-If you are brand new to the ``IKA`` cipher machine, please skip down to the
-references section and familiarize yourself with the device. This will help you
-understand the terminology used in the documentation, below.
-
-
-Requirements
-############
+## Requirements
 
 ``Purple`` was written in Python_ 3, specifically 3.3.2, and has no other external
 dependencies.
 
-
-Installation
-############
+## Installation
 
 To run the unit tests::
 
@@ -40,13 +32,11 @@ To run the unit tests::
    $ python -m unittest discover
 
 
-Initial Settings Syntax
-#######################
+## Initial Settings Syntax
 
 
 
-Command-line Usage
-##################
+## Command-line Usage
 
 To get help on the command-line ``Purple`` utility, execute the ``purple``
 command with the ``--help`` option::
@@ -87,8 +77,7 @@ be specified on the command-line with the ``-t`` or ``--text`` option, or
 a read from a file (``-i`` or ``--input``).
 
 
-Library Usage
-#############
+## Library Usage
 
 To use ``Purple`` from within Python code you must first construct
 a ``Purple97`` object, which represents a single PURPLE cipher machine. The
@@ -98,16 +87,14 @@ constructor is given below::
                   alphabet=None)
 
 
-Support
-#######
+## Support
 
 To report a bug or suggest a feature, please use the issue tracker at the
 `Purple Bitbucket page`_. You can also email the author using the address at
 the top of this file.
 
 
-References
-##########
+## References
 
 #. *PURPLE Revealed: Simulation and Computer-aided Cryptanalysis of Angooki
    Taipu B*, by Wes Freeman, Geoff Sullivan, and Frode Weierud. This paper
