@@ -3,6 +3,14 @@
 Simulations of Japanese cipher machines from 1930-1945
 ------------------------------------------------------
 
+|   |  |
+| ------------- | ------------- |
+| Author | Moshe Rubin <moshe.rubin@gmail.com> |
+| Version | 0.1 |
+| Date | December 19, 2021 |
+| License | MIT License (see LICENSE.txt) |
+| Documentation | This file |
+
 :Author: Moshe Rubin <moshe.rubin@gmail.com>
 :Version: 0.1
 :Date: December 25, 2021
