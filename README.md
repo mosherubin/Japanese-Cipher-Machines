@@ -11,16 +11,10 @@ Simulations of Japanese cipher machines from 1930-1945
 | License | MIT License (see LICENSE.txt) |
 | Documentation | This file |
 
-:Author: Moshe Rubin <moshe.rubin@gmail.com>
-:Version: 0.1
-:Date: December 25, 2021
-:Home Page: 
-:License: MIT License (see LICENSE.txt)
-:Documentation: This file
-:Support: 
-
-This project is a Python library and command-line utility for simulating the
-Japanese IKA Machine, ...
+This project is a Python 3 library for simulating several Japanese cipher 
+machines used by the Japanese military and diplomatic corps between the years
+1930-1945.  The library also includes basic and generic cryptographic
+components used to implement the aforementioned cipher machines.
 
 This project is a Python 3 library and command-line utility for encrypting and
 decrypting text by simulating the operation of an actual PURPLE machine.
