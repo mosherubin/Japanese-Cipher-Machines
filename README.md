@@ -92,8 +92,8 @@ the top of this file.
 
 ## References
 
-1. *The Imperial Japanese Navy IKA Cipher Machine*, by Chris Christensen.  This paper was published in the Proceedings of the 4th International Conference on Historical Cryptology, HistoCrypt 2021, pp. 38-47 ([downloadable here](https://ecp.ep.liu.se/index.php/histocrypt/article/view/155), last accessed 19 December 2021). 
+1. [*The Imperial Japanese Navy IKA Cipher Machine*](https://ecp.ep.liu.se/index.php/histocrypt/article/view/155), by Chris Christensen.  This paper was published in the Proceedings of the 4th International Conference on Historical Cryptology, HistoCrypt 2021, pp. 38-47 (last accessed 19 December 2021). 
 2. *Big Machines: Cryptographic Security of the German Enigma, Japanese PURPLE, and US SIGABA/ECM Cipher machines* (2018), by Stephen J. Kelley, pp. 43-50.
-3. *Development of the First Japanese Cipher Machine: RED*, by Satoshi Tomokiyo, http://cryptiana.web.fc2.com/code/redciphermachine.htm (last accessed: 19 December 2021).
+3. [*Development of the First Japanese Cipher Machine: RED*](http://cryptiana.web.fc2.com/code/redciphermachine.htm), by Satoshi Tomokiyo (last accessed: 19 December 2021).
 4. *Pearl Harbor and the Inadequacy of Cryptanalysis*, David Kahn, Cryptologia Vol. 15 No. 4 (1991), pp. 273-294.
-5. *West Wind Clear: Cryptology and the Winds Message Controversy - A Documentary History*, Robert J. Hanyok and David P. Mowry, United States Cryptologic History, Series IV: World War II, Volume X. Center for Cryptologic History, National Security Agency (2008), page 5.
+5. [*West Wind Clear: Cryptology and the Winds Message Controversy - A Documentary History*](https://www.nsa.gov/portals/75/documents/about/cryptologic-heritage/historical-figures-publications/publications/wwii/west_wind_clear.pdf), Robert J. Hanyok and David P. Mowry, United States Cryptologic History, Series IV: World War II, Volume X. Center for Cryptologic History, National Security Agency (2008), page 5 (last accessed: 26 December 2021)
