@@ -95,3 +95,4 @@ the top of this file.
 1. *The Imperial Japanese Navy IKA Cipher Machine*, by Chris Christensen.  This paper was published in the Proceedings of the 4th International Conference on Historical Cryptology, HistoCrypt 2021, pp. 38-47 ([downloadable here](https://ecp.ep.liu.se/index.php/histocrypt/article/view/155), last accessed 19 December 2021). 
 2. *Big Machines: Cryptographic Security of the German Enigma, Japanese PURPLE, and US SIGABA/ECM Cipher machines* (2018), by Stephen J. Kelley, pp. 43-50.
 3. *Development of the First Japanese Cipher Machine: RED*, by Satoshi Tomokiyo, http://cryptiana.web.fc2.com/code/redciphermachine.htm (last accessed: 19 December 2021).
+4. *Pearl Harbor and the Inadequacy of Cryptanalysis*, David Kahn, Cryptologia Vol. 15 No. 4 (1991), pp.273-294.
